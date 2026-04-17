@@ -1,564 +1,30 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>your_username — Portfolio</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  :root {
-    --win-bg: #008080;
-    --win-gray: #c0c0c0;
-    --win-dark: #808080;
-    --win-darker: #404040;
-    --win-white: #ffffff;
-    --win-black: #000000;
-    --win-blue: #000080;
-    --win-title-active: #000080;
-    --win-title-text: #ffffff;
-    --win-highlight: #000080;
-    --win-highlight-text: #ffffff;
-    --win-border-light: #dfdfdf;
-    --win-border-dark: #404040;
-    --win-link: #0000ff;
-    --pixel: 'MS Sans Serif', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-
-  body {
-    font-family: var(--pixel);
-    font-size: 11px;
-    background: var(--win-bg);
-    min-height: 100vh;
-    overflow-x: hidden;
-    cursor: default;
-    user-select: none;
-  }
-
-  /* ===== RAISED / SUNKEN BORDERS ===== */
-  .raised {
-    border-top: 2px solid var(--win-white);
-    border-left: 2px solid var(--win-white);
-    border-right: 2px solid var(--win-dark);
-    border-bottom: 2px solid var(--win-dark);
-  }
-  .raised-outer {
-    border-top: 2px solid var(--win-border-light);
-    border-left: 2px solid var(--win-border-light);
-    border-right: 2px solid var(--win-darker);
-    border-bottom: 2px solid var(--win-darker);
-  }
-  .sunken {
-    border-top: 2px solid var(--win-dark);
-    border-left: 2px solid var(--win-dark);
-    border-right: 2px solid var(--win-white);
-    border-bottom: 2px solid var(--win-white);
-  }
-
-  /* ===== DESKTOP ===== */
-  #desktop {
-    min-height: calc(100vh - 28px);
-    padding: 12px;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, 80px);
-    grid-template-rows: repeat(auto-fill, 80px);
-    grid-auto-flow: column;
-    gap: 4px;
-    align-content: start;
-    justify-content: start;
-  }
-
-  /* ===== DESKTOP ICONS ===== */
-  .desktop-icon {
-    width: 72px;
-    height: 74px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 4px;
-    gap: 4px;
-    cursor: pointer;
-    border: 2px solid transparent;
-  }
-  .desktop-icon:hover { border: 2px dotted var(--win-white); }
-  .desktop-icon.selected {
-    border: 2px dotted var(--win-white);
-    background: rgba(0,0,128,0.4);
-  }
-  .desktop-icon .icon-img {
-    width: 32px;
-    height: 32px;
-    image-rendering: pixelated;
-    flex-shrink: 0;
-  }
-  .desktop-icon .icon-label {
-    font-size: 11px;
-    color: var(--win-white);
-    text-align: center;
-    line-height: 1.2;
-    text-shadow: 1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
-    word-break: break-word;
-  }
-
-  /* ===== WINDOWS ===== */
-  .win-window {
-    position: fixed;
-    background: var(--win-gray);
-    min-width: 300px;
-    display: none;
-    z-index: 100;
-  }
-  .win-window.active { display: block; z-index: 200; }
-
-  .win-titlebar {
-    background: linear-gradient(to right, var(--win-blue), #1084d0);
-    height: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 2px;
-    cursor: move;
-  }
-  .win-title {
-    color: var(--win-white);
-    font-size: 11px;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding-left: 2px;
-    flex: 1;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-  .win-title img { width: 14px; height: 14px; image-rendering: pixelated; }
-
-  .win-controls { display: flex; gap: 2px; }
-  .win-btn {
-    width: 16px;
-    height: 14px;
-    background: var(--win-gray);
-    border-top: 2px solid var(--win-white);
-    border-left: 2px solid var(--win-white);
-    border-right: 2px solid var(--win-dark);
-    border-bottom: 2px solid var(--win-dark);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 9px;
-    font-weight: bold;
-    cursor: pointer;
-    color: var(--win-black);
-    line-height: 1;
-  }
-  .win-btn:active {
-    border-top: 2px solid var(--win-dark);
-    border-left: 2px solid var(--win-dark);
-    border-right: 2px solid var(--win-white);
-    border-bottom: 2px solid var(--win-white);
-  }
-
-  .win-menubar {
-    background: var(--win-gray);
-    display: flex;
-    gap: 0;
-    padding: 2px 4px;
-    border-bottom: 1px solid var(--win-dark);
-    font-size: 11px;
-  }
-  .win-menu-item {
-    padding: 2px 8px;
-    cursor: pointer;
-  }
-  .win-menu-item:hover {
-    background: var(--win-highlight);
-    color: var(--win-white);
-  }
-
-  .win-content {
-    padding: 8px;
-    background: var(--win-gray);
-  }
-
-  .win-body {
-    background: var(--win-white);
-    border-top: 2px solid var(--win-dark);
-    border-left: 2px solid var(--win-dark);
-    border-right: 2px solid var(--win-white);
-    border-bottom: 2px solid var(--win-white);
-    padding: 12px;
-    font-size: 11px;
-    line-height: 1.6;
-    color: var(--win-black);
-    min-height: 100px;
-  }
-
-  /* ===== ABOUT WINDOW ===== */
-  #win-about {
-    width: 420px;
-    top: 80px;
-    left: 120px;
-  }
-  .about-inner {
-    display: flex;
-    gap: 16px;
-    align-items: flex-start;
-  }
-  .about-avatar {
-    width: 64px;
-    height: 64px;
-    border-top: 2px solid var(--win-dark);
-    border-left: 2px solid var(--win-dark);
-    border-right: 2px solid var(--win-white);
-    border-bottom: 2px solid var(--win-white);
-    background: #c0c0c0;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-  }
-  .about-info h2 {
-    font-size: 13px;
-    font-weight: bold;
-    margin-bottom: 4px;
-  }
-  .about-info p { margin-bottom: 4px; color: #333; }
-  .about-info .tag {
-    display: inline-block;
-    background: var(--win-blue);
-    color: var(--win-white);
-    font-size: 10px;
-    padding: 1px 5px;
-    margin: 1px;
-  }
-
-  /* ===== PROJECTS WINDOW ===== */
-  #win-projects {
-    width: 500px;
-    top: 60px;
-    left: 180px;
-  }
-  .project-list { padding: 0; }
-  .project-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    padding: 6px 4px;
-    border-bottom: 1px dotted var(--win-dark);
-    cursor: pointer;
-  }
-  .project-item:last-child { border-bottom: none; }
-  .project-item:hover { background: var(--win-highlight); color: var(--win-white); }
-  .project-item:hover .proj-desc { color: #aaf; }
-  .project-item:hover .proj-lang { color: #ccc; }
-  .proj-icon { width: 20px; height: 20px; flex-shrink: 0; image-rendering: pixelated; }
-  .proj-info { flex: 1; }
-  .proj-name { font-weight: bold; font-size: 11px; }
-  .proj-desc { font-size: 10px; color: #555; margin-top: 1px; }
-  .proj-lang { font-size: 10px; color: #777; margin-top: 1px; }
-  .proj-stars { font-size: 10px; margin-left: auto; flex-shrink: 0; }
-
-  /* ===== SKILLS WINDOW ===== */
-  #win-skills {
-    width: 380px;
-    top: 100px;
-    left: 220px;
-  }
-  .skills-section { margin-bottom: 10px; }
-  .skills-section h3 {
-    background: var(--win-blue);
-    color: var(--win-white);
-    padding: 2px 6px;
-    font-size: 11px;
-    margin-bottom: 4px;
-  }
-  .skill-bar-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-bottom: 3px;
-  }
-  .skill-name { width: 80px; font-size: 10px; flex-shrink: 0; }
-  .skill-bar-outer {
-    flex: 1;
-    height: 12px;
-    background: var(--win-white);
-    border-top: 1px solid var(--win-dark);
-    border-left: 1px solid var(--win-dark);
-    border-right: 1px solid var(--win-white);
-    border-bottom: 1px solid var(--win-white);
-  }
-  .skill-bar-inner {
-    height: 100%;
-    background: var(--win-blue);
-  }
-  .skill-pct { width: 28px; font-size: 10px; text-align: right; flex-shrink: 0; }
-
-  /* ===== CONTACTS WINDOW ===== */
-  #win-contacts {
-    width: 340px;
-    top: 120px;
-    left: 260px;
-  }
-  .contact-row {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 5px 0;
-    border-bottom: 1px dotted var(--win-dark);
-    cursor: pointer;
-  }
-  .contact-row:last-child { border-bottom: none; }
-  .contact-row:hover { background: var(--win-highlight); color: var(--win-white); }
-  .contact-icon { width: 16px; height: 16px; image-rendering: pixelated; }
-  .contact-label { width: 70px; font-weight: bold; font-size: 11px; flex-shrink: 0; }
-  .contact-value { font-size: 11px; color: var(--win-link); flex: 1; }
-  .contact-row:hover .contact-value { color: #aaf; }
-
-  /* ===== RECYCLE BIN ===== */
-  #recycle-msg {
-    position: fixed;
-    bottom: 40px;
-    right: 12px;
-    display: none;
-    z-index: 999;
-  }
-
-  /* ===== TASKBAR ===== */
-  #taskbar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 28px;
-    background: var(--win-gray);
-    border-top: 2px solid var(--win-white);
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    padding: 0 2px;
-    z-index: 1000;
-  }
-
-  #start-btn {
-    height: 22px;
-    padding: 0 8px;
-    background: var(--win-gray);
-    border-top: 2px solid var(--win-white);
-    border-left: 2px solid var(--win-white);
-    border-right: 2px solid var(--win-dark);
-    border-bottom: 2px solid var(--win-dark);
-    font-size: 11px;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    flex-shrink: 0;
-  }
-  #start-btn:active {
-    border-top: 2px solid var(--win-dark);
-    border-left: 2px solid var(--win-dark);
-    border-right: 2px solid var(--win-white);
-    border-bottom: 2px solid var(--win-white);
-  }
-  #start-btn svg { width: 16px; height: 16px; }
-
-  .taskbar-sep {
-    width: 2px;
-    height: 22px;
-    border-left: 1px solid var(--win-dark);
-    border-right: 1px solid var(--win-white);
-    flex-shrink: 0;
-  }
-
-  .taskbar-btn {
-    height: 22px;
-    padding: 0 8px;
-    background: var(--win-gray);
-    border-top: 2px solid var(--win-white);
-    border-left: 2px solid var(--win-white);
-    border-right: 2px solid var(--win-dark);
-    border-bottom: 2px solid var(--win-dark);
-    font-size: 11px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    max-width: 150px;
-    overflow: hidden;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  .taskbar-btn.pressed {
-    border-top: 2px solid var(--win-dark);
-    border-left: 2px solid var(--win-dark);
-    border-right: 2px solid var(--win-white);
-    border-bottom: 2px solid var(--win-white);
-    background: #b0b0b0;
-  }
-  .taskbar-btn img { width: 14px; height: 14px; image-rendering: pixelated; }
-
-  #taskbar-clock {
-    margin-left: auto;
-    padding: 2px 8px;
-    border-top: 1px solid var(--win-dark);
-    border-left: 1px solid var(--win-dark);
-    border-right: 1px solid var(--win-white);
-    border-bottom: 1px solid var(--win-white);
-    font-size: 11px;
-    flex-shrink: 0;
-  }
-
-  /* ===== START MENU ===== */
-  #start-menu {
-    position: fixed;
-    bottom: 28px;
-    left: 0;
-    width: 190px;
-    background: var(--win-gray);
-    border-top: 2px solid var(--win-white);
-    border-left: 2px solid var(--win-white);
-    border-right: 2px solid var(--win-dark);
-    border-bottom: 2px solid var(--win-dark);
-    display: none;
-    z-index: 2000;
-  }
-  #start-menu.open { display: flex; }
-
-  .start-sidebar {
-    width: 20px;
-    background: var(--win-blue);
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    padding-bottom: 6px;
-    flex-shrink: 0;
-  }
-  .start-sidebar span {
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
-    color: rgba(255,255,255,0.3);
-    font-size: 14px;
-    font-weight: bold;
-    letter-spacing: 2px;
-    white-space: nowrap;
-  }
-
-  .start-items { flex: 1; }
-  .start-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 5px 8px;
-    cursor: pointer;
-    font-size: 11px;
-  }
-  .start-item:hover {
-    background: var(--win-highlight);
-    color: var(--win-white);
-  }
-  .start-item img { width: 16px; height: 16px; image-rendering: pixelated; }
-  .start-divider {
-    height: 1px;
-    background: var(--win-dark);
-    margin: 2px 4px;
-    box-shadow: 0 1px 0 var(--win-white);
-  }
-
-  /* ===== SVG PIXEL ICONS ===== */
-  .pixel-icon {
-    image-rendering: pixelated;
-    shape-rendering: crispEdges;
-  }
-
-  /* tooltip / status bar */
-  #statusbar {
-    position: fixed;
-    bottom: 28px;
-    left: 0;
-    right: 0;
-    height: 18px;
-    background: var(--win-gray);
-    border-top: 1px solid var(--win-dark);
-    font-size: 10px;
-    padding: 2px 8px;
-    color: #333;
-    display: none;
-  }
-
-  /* splash / boot screen */
-  #boot-screen {
-    position: fixed;
-    inset: 0;
-    background: #000;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    color: #fff;
-  }
-  #boot-logo {
-    font-family: 'VT323', monospace;
-    font-size: 48px;
-    color: #00ff00;
-    text-shadow: 0 0 20px #00ff00;
-    margin-bottom: 20px;
-    animation: blink 0.8s step-end infinite;
-  }
-  @keyframes blink { 50% { opacity: 0; } }
-  #boot-bar-outer {
-    width: 300px;
-    height: 20px;
-    border: 2px solid #fff;
-    background: #000;
-    overflow: hidden;
-  }
-  #boot-bar-inner {
-    height: 100%;
-    width: 0;
-    background: #0000aa;
-    transition: width 0.05s;
-  }
-  #boot-text {
-    margin-top: 12px;
-    font-family: 'VT323', monospace;
-    font-size: 16px;
-    color: #aaa;
-  }
-
-  /* drag helpers */
-  .win-window { user-select: none; }
-
-  /* scrollbar old style */
-  .win-body::-webkit-scrollbar { width: 16px; }
-  .win-body::-webkit-scrollbar-track { background: var(--win-gray); }
-  .win-body::-webkit-scrollbar-thumb {
-    background: var(--win-gray);
-    border-top: 2px solid var(--win-white);
-    border-left: 2px solid var(--win-white);
-    border-right: 2px solid var(--win-dark);
-    border-bottom: 2px solid var(--win-dark);
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Essense — Portfolio</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- BOOT SCREEN -->
+<!-- ═══════════════════════════════════════
+     BOOT SCREEN
+═══════════════════════════════════════ -->
 <div id="boot-screen">
-  <div id="boot-logo">YOUR_PC</div>
+  <div id="boot-logo">ESSENSE_PC</div>
   <div id="boot-bar-outer"><div id="boot-bar-inner"></div></div>
   <div id="boot-text">Загрузка Windows 95...</div>
 </div>
 
-<!-- DESKTOP ICONS -->
+<!-- ═══════════════════════════════════════
+     DESKTOP ICONS
+═══════════════════════════════════════ -->
 <div id="desktop">
-  <div class="desktop-icon" id="icon-about" ondblclick="openWindow('win-about')" onclick="selectIcon(this)">
+
+  <!-- Обо мне -->
+  <div class="desktop-icon" id="icon-about"
+       ondblclick="openWindow('win-about')" onclick="selectIcon(this)">
     <svg class="icon-img pixel-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
       <rect x="2" y="2" width="28" height="22" fill="#c0c0c0" stroke="#000" stroke-width="1"/>
       <rect x="4" y="4" width="24" height="18" fill="#008080"/>
@@ -572,7 +38,9 @@
     <span class="icon-label">Обо мне</span>
   </div>
 
-  <div class="desktop-icon" id="icon-projects" ondblclick="openWindow('win-projects')" onclick="selectIcon(this)">
+  <!-- Проекты -->
+  <div class="desktop-icon" id="icon-projects"
+       ondblclick="openWindow('win-projects')" onclick="selectIcon(this)">
     <svg class="icon-img pixel-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
       <rect x="2" y="8" width="28" height="22" fill="#ffd700" stroke="#000" stroke-width="1"/>
       <rect x="2" y="6" width="14" height="4" fill="#ffd700" stroke="#000" stroke-width="1"/>
@@ -585,7 +53,9 @@
     <span class="icon-label">Проекты</span>
   </div>
 
-  <div class="desktop-icon" id="icon-skills" ondblclick="openWindow('win-skills')" onclick="selectIcon(this)">
+  <!-- Навыки -->
+  <div class="desktop-icon" id="icon-skills"
+       ondblclick="openWindow('win-skills')" onclick="selectIcon(this)">
     <svg class="icon-img pixel-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
       <rect x="2" y="14" width="28" height="16" fill="#c0c0c0" stroke="#000" stroke-width="1"/>
       <rect x="4" y="16" width="6" height="10" fill="#0000aa"/>
@@ -600,7 +70,9 @@
     <span class="icon-label">Навыки</span>
   </div>
 
-  <div class="desktop-icon" id="icon-contacts" ondblclick="openWindow('win-contacts')" onclick="selectIcon(this)">
+  <!-- Контакты -->
+  <div class="desktop-icon" id="icon-contacts"
+       ondblclick="openWindow('win-contacts')" onclick="selectIcon(this)">
     <svg class="icon-img pixel-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
       <rect x="2" y="6" width="28" height="20" fill="#c0c0c0" stroke="#000" stroke-width="1"/>
       <rect x="4" y="8" width="24" height="16" fill="#e8e8ff"/>
@@ -611,7 +83,9 @@
     <span class="icon-label">Контакты</span>
   </div>
 
-  <div class="desktop-icon" id="icon-github" ondblclick="goGithub()" onclick="selectIcon(this)" style="margin-top: 8px;">
+  <!-- GitHub -->
+  <div class="desktop-icon" id="icon-github"
+       ondblclick="goGithub()" onclick="selectIcon(this)" style="margin-top:8px;">
     <svg class="icon-img pixel-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
       <rect x="2" y="2" width="28" height="28" rx="4" fill="#24292e"/>
       <path d="M16 5C9.9 5 5 9.9 5 16c0 4.9 3.2 9 7.5 10.5.5.1.7-.2.7-.5v-1.8c-3 .7-3.6-1.4-3.6-1.4-.5-1.2-1.2-1.5-1.2-1.5-1-.7.1-.7.1-.7 1.1.1 1.6 1.1 1.6 1.1 1 1.6 2.5 1.2 3.1.9.1-.7.4-1.2.7-1.4-2.4-.3-4.9-1.2-4.9-5.3 0-1.2.4-2.1 1.1-2.9-.1-.3-.5-1.4.1-2.9 0 0 .9-.3 3 1.1a10.4 10.4 0 015.4 0c2.1-1.4 3-1.1 3-1.1.6 1.5.2 2.6.1 2.9.7.8 1.1 1.7 1.1 2.9 0 4.1-2.5 5-4.9 5.3.4.3.7 1 .7 2v3c0 .3.2.6.7.5C23.8 25 27 20.9 27 16c0-6.1-4.9-11-11-11z" fill="#fff"/>
@@ -619,7 +93,10 @@
     <span class="icon-label">GitHub</span>
   </div>
 
-  <div class="desktop-icon" id="icon-recycle" style="position:fixed; right:16px; bottom:44px;" ondblclick="openRecycleBin()" onclick="selectIcon(this)">
+  <!-- Корзина (fixed position) -->
+  <div class="desktop-icon" id="icon-recycle"
+       style="position:fixed; right:16px; bottom:44px;"
+       ondblclick="openRecycleBin()" onclick="selectIcon(this)">
     <svg class="icon-img pixel-icon" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
       <rect x="8" y="12" width="16" height="16" fill="#c0c0c0" stroke="#000" stroke-width="1"/>
       <rect x="6" y="10" width="20" height="4" fill="#808080" stroke="#000" stroke-width="1"/>
@@ -630,14 +107,21 @@
     </svg>
     <span class="icon-label">Корзина</span>
   </div>
-</div>
 
-<!-- ===== WINDOW: ABOUT ===== -->
+</div><!-- /desktop -->
+
+
+<!-- ═══════════════════════════════════════
+     WINDOW: ОБОМНЕ
+═══════════════════════════════════════ -->
 <div class="win-window raised-outer" id="win-about">
   <div class="win-titlebar" onmousedown="startDrag(event,'win-about')">
     <div class="win-title">
-      <svg width="14" height="14" viewBox="0 0 32 32"><circle cx="16" cy="10" r="6" fill="#ffd700"/><rect x="10" y="16" width="12" height="12" fill="#ffd700"/></svg>
-      Обо мне — your_username
+      <svg width="14" height="14" viewBox="0 0 32 32">
+        <circle cx="16" cy="10" r="6" fill="#ffd700"/>
+        <rect x="10" y="16" width="12" height="12" fill="#ffd700"/>
+      </svg>
+      Обо мне — Essense (Артем)
     </div>
     <div class="win-controls">
       <div class="win-btn" onclick="minimizeWindow('win-about')">_</div>
@@ -645,11 +129,80 @@
       <div class="win-btn" onclick="closeWindow('win-about')">✕</div>
     </div>
   </div>
-  <div class="win-menubar">
-    <span class="win-menu-item">Файл</span>
-    <span class="win-menu-item">Правка</span>
-    <span class="win-menu-item">Вид</span>
-    <span class="win-menu-item">Справка</span>
+  <div class="win-menubar" id="menubar-about">
+    <div class="win-menu-wrap" onclick="toggleMenu('menu-about-file', event)">
+      <span class="win-menu-item" id="mi-about-file">Файл</span>
+      <div class="win-dropdown" id="menu-about-file">
+        <div class="dd-item" onclick="closeWindow('win-about')">
+          <span class="dd-icon">📄</span> Закрыть окно
+        </div>
+        <div class="dd-sep"></div>
+        <div class="dd-item" onclick="openWindow('win-about'); closeAllMenus()">
+          <span class="dd-icon">🔄</span> Обновить
+        </div>
+        <div class="dd-sep"></div>
+        <div class="dd-item" onclick="printPage()">
+          <span class="dd-icon">🖨️</span> Печать...
+        </div>
+      </div>
+    </div>
+
+    <div class="win-menu-wrap" onclick="toggleMenu('menu-about-edit', event)">
+      <span class="win-menu-item" id="mi-about-edit">Правка</span>
+      <div class="win-dropdown" id="menu-about-edit">
+        <div class="dd-item" onclick="copyContacts()">
+          <span class="dd-icon">📋</span> Копировать контакты
+        </div>
+        <div class="dd-item" onclick="copyGithub()">
+          <span class="dd-icon">🐙</span> Копировать GitHub
+        </div>
+        <div class="dd-sep"></div>
+        <div class="dd-item dd-disabled">
+          <span class="dd-icon">✂️</span> Вырезать
+        </div>
+        <div class="dd-item dd-disabled">
+          <span class="dd-icon">📌</span> Вставить
+        </div>
+      </div>
+    </div>
+
+    <div class="win-menu-wrap" onclick="toggleMenu('menu-about-view', event)">
+      <span class="win-menu-item" id="mi-about-view">Вид</span>
+      <div class="win-dropdown" id="menu-about-view">
+        <div class="dd-item dd-checked" id="theme-light" onclick="setTheme('light')">
+          <span class="dd-check">✓</span> Светлая тема
+        </div>
+        <div class="dd-item" id="theme-dark" onclick="setTheme('dark')">
+          <span class="dd-check"> </span> Тёмная тема
+        </div>
+        <div class="dd-item" id="theme-teal" onclick="setTheme('teal')">
+          <span class="dd-check"> </span> Бирюзовая
+        </div>
+        <div class="dd-item" id="theme-amber" onclick="setTheme('amber')">
+          <span class="dd-check"> </span> Янтарная
+        </div>
+        <div class="dd-item" id="theme-matrix" onclick="setTheme('matrix')">
+          <span class="dd-check"> </span> Matrix
+        </div>
+        <div class="dd-sep"></div>
+        <div class="dd-item" onclick="toggleCompactMode()">
+          <span class="dd-check" id="compact-check"> </span> Компактный вид
+        </div>
+      </div>
+    </div>
+
+    <div class="win-menu-wrap" onclick="toggleMenu('menu-about-help', event)">
+      <span class="win-menu-item" id="mi-about-help">Справка</span>
+      <div class="win-dropdown" id="menu-about-help">
+        <div class="dd-item" onclick="showAboutDlg()">
+          <span class="dd-icon">ℹ️</span> О программе
+        </div>
+        <div class="dd-sep"></div>
+        <div class="dd-item" onclick="goGithub()">
+          <span class="dd-icon">🐙</span> Открыть GitHub
+        </div>
+      </div>
+    </div>
   </div>
   <div class="win-content">
     <div class="win-body">
@@ -664,34 +217,42 @@
           </svg>
         </div>
         <div class="about-info">
-          <h2>your_username</h2>
+          <h2>Essense (Артем)</h2>
           <p>📍 Ташкент, Узбекистан</p>
-          <p style="margin-top:6px;">Разработчик, который любит создавать интересные проекты. Увлекаюсь open-source и изучением новых технологий.</p>
+          <p style="margin-top:6px;">Разработчик, который любит создавать интересные проекты. Увлекаюсь open-source, вайб-кодингом и изучением новых технологий. Специализируюсь на Java, C++, MERN, создании игр и веб-приложений.</p>
           <div style="margin-top:8px;">
-            <span class="tag">Python</span>
+            <span class="tag">Java</span>
+            <span class="tag">C++</span>
+            <span class="tag">MERN</span>
             <span class="tag">JavaScript</span>
-            <span class="tag">Linux</span>
-            <span class="tag">Security</span>
+            <span class="tag">SQL</span>
+            <span class="tag">HTML/CSS</span>
           </div>
         </div>
       </div>
       <div style="margin-top:12px; border-top:1px solid #ccc; padding-top:8px;">
         <table style="width:100%; font-size:11px;">
-          <tr><td style="color:#555; width:100px;">⭐ Stars</td><td><b>142</b></td></tr>
-          <tr><td style="color:#555;">📦 Repos</td><td><b>28</b></td></tr>
-          <tr><td style="color:#555;">👥 Followers</td><td><b>64</b></td></tr>
-          <tr><td style="color:#555;">📅 Joined</td><td><b>2021</b></td></tr>
+          <tr><td style="color:#555; width:100px;">⭐ Stars</td><td><b>~150</b></td></tr>
+          <tr><td style="color:#555;">📦 Repos</td><td><b>24</b></td></tr>
+          <tr><td style="color:#555;">👥 Followers</td><td><b>42</b></td></tr>
+          <tr><td style="color:#555;">📅 Joined</td><td><b>2022</b></td></tr>
         </table>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ===== WINDOW: PROJECTS ===== -->
+
+<!-- ═══════════════════════════════════════
+     WINDOW: ПРОЕКТЫ
+═══════════════════════════════════════ -->
 <div class="win-window raised-outer" id="win-projects">
   <div class="win-titlebar" onmousedown="startDrag(event,'win-projects')">
     <div class="win-title">
-      <svg width="14" height="14" viewBox="0 0 32 32"><rect x="2" y="8" width="28" height="20" fill="#ffd700"/><rect x="2" y="6" width="12" height="4" fill="#ffd700"/></svg>
+      <svg width="14" height="14" viewBox="0 0 32 32">
+        <rect x="2" y="8" width="28" height="20" fill="#ffd700"/>
+        <rect x="2" y="6" width="12" height="4" fill="#ffd700"/>
+      </svg>
       Проекты — GitHub Repositories
     </div>
     <div class="win-controls">
@@ -701,68 +262,121 @@
     </div>
   </div>
   <div class="win-menubar">
-    <span class="win-menu-item">Файл</span>
-    <span class="win-menu-item">Вид</span>
-    <span class="win-menu-item">Сортировка</span>
+    <div class="win-menu-wrap" onclick="toggleMenu('menu-proj-file', event)">
+      <span class="win-menu-item">Файл</span>
+      <div class="win-dropdown" id="menu-proj-file">
+        <div class="dd-item" onclick="closeWindow('win-projects')"><span class="dd-icon">📄</span> Закрыть</div>
+        <div class="dd-item" onclick="goGithub()"><span class="dd-icon">🐙</span> Открыть GitHub</div>
+      </div>
+    </div>
+    <div class="win-menu-wrap" onclick="toggleMenu('menu-proj-view', event)">
+      <span class="win-menu-item">Вид</span>
+      <div class="win-dropdown" id="menu-proj-view">
+        <div class="dd-item dd-checked" id="proj-view-list" onclick="setProjView('list')"><span class="dd-check">✓</span> Список</div>
+        <div class="dd-item" id="proj-view-compact" onclick="setProjView('compact')"><span class="dd-check"> </span> Компактный</div>
+      </div>
+    </div>
+    <div class="win-menu-wrap" onclick="toggleMenu('menu-proj-sort', event)">
+      <span class="win-menu-item">Сортировка</span>
+      <div class="win-dropdown" id="menu-proj-sort">
+        <div class="dd-item dd-checked" id="sort-stars" onclick="sortProjects('stars')"><span class="dd-check">✓</span> По звёздам</div>
+        <div class="dd-item" id="sort-name" onclick="sortProjects('name')"><span class="dd-check"> </span> По названию</div>
+        <div class="dd-item" id="sort-lang" onclick="sortProjects('lang')"><span class="dd-check"> </span> По языку</div>
+      </div>
+    </div>
   </div>
   <div class="win-content">
     <div class="win-body" style="padding:0; max-height:260px; overflow-y:auto;">
       <div class="project-list">
-        <div class="project-item" onclick="alert('Открываю github.com/your_username/project-1')">
-          <svg class="proj-icon pixel-icon" viewBox="0 0 20 20"><rect x="2" y="4" width="16" height="14" fill="#ffd700"/><rect x="2" y="3" width="8" height="3" fill="#ffd700"/></svg>
+
+        <div class="project-item"
+             onclick="window.open('https://github.com/Anonymous1artem/democ/tree/main','_blank')">
+          <svg class="proj-icon pixel-icon" viewBox="0 0 20 20">
+            <rect x="2" y="4" width="16" height="14" fill="#ffd700"/>
+            <rect x="2" y="3" width="8" height="3" fill="#ffd700"/>
+          </svg>
           <div class="proj-info">
-            <div class="proj-name">🔥 awesome-project</div>
-            <div class="proj-desc">Крутой проект с огнём и дымом</div>
-            <div class="proj-lang">Python · MIT License</div>
+            <div class="proj-name">🎮 JavaRPG</div>
+            <div class="proj-desc">RPG-игра на Java с графикой Swing и системой квестов</div>
+            <div class="proj-lang">Java · MIT License</div>
           </div>
-          <div class="proj-stars">⭐ 48</div>
+          <div class="proj-stars">⭐ 34</div>
         </div>
-        <div class="project-item" onclick="alert('Открываю github.com/your_username/web-tool')">
-          <svg class="proj-icon pixel-icon" viewBox="0 0 20 20"><rect x="2" y="4" width="16" height="14" fill="#ffd700"/><rect x="2" y="3" width="8" height="3" fill="#ffd700"/></svg>
+
+        <div class="project-item"
+             onclick="window.open('https://github.com/Anonymous1artem/democ/tree/main','_blank')">
+          <svg class="proj-icon pixel-icon" viewBox="0 0 20 20">
+            <rect x="2" y="4" width="16" height="14" fill="#ffd700"/>
+            <rect x="2" y="3" width="8" height="3" fill="#ffd700"/>
+          </svg>
           <div class="proj-info">
-            <div class="proj-name">🌐 web-tool</div>
-            <div class="proj-desc">Веб-инструмент для автоматизации задач</div>
+            <div class="proj-name">🛒 MERN Shop</div>
+            <div class="proj-desc">Интернет-магазин на MERN стеке (MongoDB, Express, React, Node.js)</div>
+            <div class="proj-lang">JavaScript · MIT</div>
+          </div>
+          <div class="proj-stars">⭐ 57</div>
+        </div>
+
+        <div class="project-item"
+             onclick="window.open('https://github.com/Anonymous1artem/democ/tree/main','_blank')">
+          <svg class="proj-icon pixel-icon" viewBox="0 0 20 20">
+            <rect x="2" y="4" width="16" height="14" fill="#ffd700"/>
+            <rect x="2" y="3" width="8" height="3" fill="#ffd700"/>
+          </svg>
+          <div class="proj-info">
+            <div class="proj-name">🐍 CppSnake</div>
+            <div class="proj-desc">Классическая игра Змейка на C++ с консольным интерфейсом</div>
+            <div class="proj-lang">C++ · GPL-3.0</div>
+          </div>
+          <div class="proj-stars">⭐ 22</div>
+        </div>
+
+        <div class="project-item"
+             onclick="window.open('https://github.com/Anonymous1artem/democ/tree/main','_blank')">
+          <svg class="proj-icon pixel-icon" viewBox="0 0 20 20">
+            <rect x="2" y="4" width="16" height="14" fill="#ffd700"/>
+            <rect x="2" y="3" width="8" height="3" fill="#ffd700"/>
+          </svg>
+          <div class="proj-info">
+            <div class="proj-name">✅ TaskManager</div>
+            <div class="proj-desc">Веб-приложение для управления задачами (React + Node.js + PostgreSQL)</div>
             <div class="proj-lang">JavaScript · Apache-2.0</div>
           </div>
-          <div class="proj-stars">⭐ 32</div>
+          <div class="proj-stars">⭐ 41</div>
         </div>
-        <div class="project-item" onclick="alert('Открываю github.com/your_username/sec-scanner')">
-          <svg class="proj-icon pixel-icon" viewBox="0 0 20 20"><rect x="2" y="4" width="16" height="14" fill="#ffd700"/><rect x="2" y="3" width="8" height="3" fill="#ffd700"/></svg>
+
+        <div class="project-item"
+             onclick="window.open('https://github.com/Anonymous1artem/democ/tree/main','_blank')">
+          <svg class="proj-icon pixel-icon" viewBox="0 0 20 20">
+            <rect x="2" y="4" width="16" height="14" fill="#ffd700"/>
+            <rect x="2" y="3" width="8" height="3" fill="#ffd700"/>
+          </svg>
           <div class="proj-info">
-            <div class="proj-name">🔒 sec-scanner</div>
-            <div class="proj-desc">Сканер уязвимостей для сетей</div>
-            <div class="proj-lang">Python · GPL-3.0</div>
+            <div class="proj-name">🗄️ SQL Lab</div>
+            <div class="proj-desc">Учебные проекты по MySQL и PostgreSQL, включая оптимизацию запросов</div>
+            <div class="proj-lang">SQL · Public Domain</div>
           </div>
-          <div class="proj-stars">⭐ 27</div>
+          <div class="proj-stars">⭐ 18</div>
         </div>
-        <div class="project-item" onclick="alert('Открываю github.com/your_username/dotfiles')">
-          <svg class="proj-icon pixel-icon" viewBox="0 0 20 20"><rect x="2" y="4" width="16" height="14" fill="#ffd700"/><rect x="2" y="3" width="8" height="3" fill="#ffd700"/></svg>
-          <div class="proj-info">
-            <div class="proj-name">⚙️ dotfiles</div>
-            <div class="proj-desc">Мои конфиги для Linux / Arch</div>
-            <div class="proj-lang">Shell · Public Domain</div>
-          </div>
-          <div class="proj-stars">⭐ 19</div>
-        </div>
-        <div class="project-item" onclick="alert('Открываю github.com/your_username/bot-template')">
-          <svg class="proj-icon pixel-icon" viewBox="0 0 20 20"><rect x="2" y="4" width="16" height="14" fill="#ffd700"/><rect x="2" y="3" width="8" height="3" fill="#ffd700"/></svg>
-          <div class="proj-info">
-            <div class="proj-name">🤖 bot-template</div>
-            <div class="proj-desc">Шаблон Telegram-бота на Python</div>
-            <div class="proj-lang">Python · MIT License</div>
-          </div>
-          <div class="proj-stars">⭐ 16</div>
-        </div>
+
       </div>
     </div>
   </div>
 </div>
 
-<!-- ===== WINDOW: SKILLS ===== -->
+
+<!-- ═══════════════════════════════════════
+     WINDOW: НАВЫКИ
+═══════════════════════════════════════ -->
 <div class="win-window raised-outer" id="win-skills">
   <div class="win-titlebar" onmousedown="startDrag(event,'win-skills')">
     <div class="win-title">
-      <svg width="14" height="14" viewBox="0 0 32 32"><rect x="2" y="14" width="28" height="14" fill="#c0c0c0"/><rect x="4" y="16" width="6" height="10" fill="#0000aa"/><rect x="12" y="18" width="6" height="8" fill="#0000aa"/><rect x="20" y="12" width="6" height="14" fill="#0000aa"/></svg>
+      <svg width="14" height="14" viewBox="0 0 32 32">
+        <rect x="2" y="14" width="28" height="14" fill="#c0c0c0"/>
+        <rect x="4" y="16" width="6" height="10" fill="#0000aa"/>
+        <rect x="12" y="18" width="6" height="8" fill="#0000aa"/>
+        <rect x="20" y="12" width="6" height="14" fill="#0000aa"/>
+      </svg>
       Навыки — Skills &amp; Technologies
     </div>
     <div class="win-controls">
@@ -772,30 +386,139 @@
     </div>
   </div>
   <div class="win-content">
-    <div class="win-body">
+    <div class="win-body" style="max-height:360px; overflow-y:auto;">
+
+      <!-- Языки программирования -->
       <div class="skills-section">
         <h3>⚡ Языки программирования</h3>
-        <div class="skill-bar-row"><span class="skill-name">Python</span><div class="skill-bar-outer"><div class="skill-bar-inner" style="width:90%"></div></div><span class="skill-pct">90%</span></div>
-        <div class="skill-bar-row"><span class="skill-name">JavaScript</span><div class="skill-bar-outer"><div class="skill-bar-inner" style="width:75%"></div></div><span class="skill-pct">75%</span></div>
-        <div class="skill-bar-row"><span class="skill-name">Bash/Shell</span><div class="skill-bar-outer"><div class="skill-bar-inner" style="width:80%"></div></div><span class="skill-pct">80%</span></div>
-        <div class="skill-bar-row"><span class="skill-name">C/C++</span><div class="skill-bar-outer"><div class="skill-bar-inner" style="width:50%"></div></div><span class="skill-pct">50%</span></div>
+        <div class="skill-bar-row">
+          <span class="skill-name">Java</span>
+          <div class="skill-bar-outer"><div class="skill-bar-inner" data-width="85%" style="width:85%"></div></div>
+          <span class="skill-pct">85%</span>
+        </div>
+        <div class="skill-bar-row">
+          <span class="skill-name">C++</span>
+          <div class="skill-bar-outer"><div class="skill-bar-inner" data-width="75%" style="width:75%"></div></div>
+          <span class="skill-pct">75%</span>
+        </div>
+        <div class="skill-bar-row">
+          <span class="skill-name">JavaScript</span>
+          <div class="skill-bar-outer"><div class="skill-bar-inner" data-width="80%" style="width:80%"></div></div>
+          <span class="skill-pct">80%</span>
+        </div>
+        <div class="skill-bar-row">
+          <span class="skill-name">SQL</span>
+          <div class="skill-bar-outer"><div class="skill-bar-inner" data-width="70%" style="width:70%"></div></div>
+          <span class="skill-pct">70%</span>
+        </div>
+        <div class="skill-bar-row">
+          <span class="skill-name">HTML/CSS</span>
+          <div class="skill-bar-outer"><div class="skill-bar-inner" data-width="90%" style="width:90%"></div></div>
+          <span class="skill-pct">90%</span>
+        </div>
       </div>
+
+      <!-- Технологии -->
       <div class="skills-section">
-        <h3>🔧 Инструменты</h3>
-        <div class="skill-bar-row"><span class="skill-name">Linux</span><div class="skill-bar-outer"><div class="skill-bar-inner" style="width:85%"></div></div><span class="skill-pct">85%</span></div>
-        <div class="skill-bar-row"><span class="skill-name">Docker</span><div class="skill-bar-outer"><div class="skill-bar-inner" style="width:70%"></div></div><span class="skill-pct">70%</span></div>
-        <div class="skill-bar-row"><span class="skill-name">Git</span><div class="skill-bar-outer"><div class="skill-bar-inner" style="width:88%"></div></div><span class="skill-pct">88%</span></div>
-        <div class="skill-bar-row"><span class="skill-name">Networking</span><div class="skill-bar-outer"><div class="skill-bar-inner" style="width:65%"></div></div><span class="skill-pct">65%</span></div>
+        <h3>📚 Технологии и фреймворки</h3>
+        <div class="skill-bar-row">
+          <span class="skill-name">MERN</span>
+          <div class="skill-bar-outer"><div class="skill-bar-inner" data-width="78%" style="width:78%"></div></div>
+          <span class="skill-pct">78%</span>
+        </div>
+        <div class="skill-bar-row">
+          <span class="skill-name">React</span>
+          <div class="skill-bar-outer"><div class="skill-bar-inner" data-width="75%" style="width:75%"></div></div>
+          <span class="skill-pct">75%</span>
+        </div>
+        <div class="skill-bar-row">
+          <span class="skill-name">Node.js</span>
+          <div class="skill-bar-outer"><div class="skill-bar-inner" data-width="72%" style="width:72%"></div></div>
+          <span class="skill-pct">72%</span>
+        </div>
+        <div class="skill-bar-row">
+          <span class="skill-name">Express</span>
+          <div class="skill-bar-outer"><div class="skill-bar-inner" data-width="70%" style="width:70%"></div></div>
+          <span class="skill-pct">70%</span>
+        </div>
       </div>
+
+      <!-- DevOps -->
+      <div class="skills-section">
+        <h3>🔧 Инструменты и DevOps</h3>
+        <div class="skill-bar-row">
+          <span class="skill-name">Git</span>
+          <div class="skill-bar-outer"><div class="skill-bar-inner" data-width="88%" style="width:88%"></div></div>
+          <span class="skill-pct">88%</span>
+        </div>
+        <div class="skill-bar-row">
+          <span class="skill-name">Docker</span>
+          <div class="skill-bar-outer"><div class="skill-bar-inner" data-width="65%" style="width:65%"></div></div>
+          <span class="skill-pct">65%</span>
+        </div>
+        <div class="skill-bar-row">
+          <span class="skill-name">Linux</span>
+          <div class="skill-bar-outer"><div class="skill-bar-inner" data-width="80%" style="width:80%"></div></div>
+          <span class="skill-pct">80%</span>
+        </div>
+        <div class="skill-bar-row">
+          <span class="skill-name">VS Code / IntelliJ</span>
+          <div class="skill-bar-outer"><div class="skill-bar-inner" data-width="90%" style="width:90%"></div></div>
+          <span class="skill-pct">90%</span>
+        </div>
+        <div class="skill-bar-row">
+          <span class="skill-name">Postman</span>
+          <div class="skill-bar-outer"><div class="skill-bar-inner" data-width="70%" style="width:70%"></div></div>
+          <span class="skill-pct">70%</span>
+        </div>
+        <div class="skill-bar-row">
+          <span class="skill-name">MySQL/PostgreSQL</span>
+          <div class="skill-bar-outer"><div class="skill-bar-inner" data-width="75%" style="width:75%"></div></div>
+          <span class="skill-pct">75%</span>
+        </div>
+      </div>
+
+      <!-- AI-assisted coding -->
+      <div class="skills-section">
+        <h3>🤖 AI-assisted coding <span class="ai-badge">NEW</span></h3>
+        <div class="skill-bar-row">
+          <span class="skill-name">Claude / GPT</span>
+          <div class="skill-bar-outer"><div class="skill-bar-inner ai-bar" data-width="92%" style="width:92%"></div></div>
+          <span class="skill-pct">92%</span>
+        </div>
+        <div class="skill-bar-row">
+          <span class="skill-name">Copilot</span>
+          <div class="skill-bar-outer"><div class="skill-bar-inner ai-bar" data-width="85%" style="width:85%"></div></div>
+          <span class="skill-pct">85%</span>
+        </div>
+        <div class="skill-bar-row">
+          <span class="skill-name">Prompt eng.</span>
+          <div class="skill-bar-outer"><div class="skill-bar-inner ai-bar" data-width="88%" style="width:88%"></div></div>
+          <span class="skill-pct">88%</span>
+        </div>
+        <div class="skill-bar-row">
+          <span class="skill-name">Vibe-coding</span>
+          <div class="skill-bar-outer"><div class="skill-bar-inner ai-bar" data-width="95%" style="width:95%"></div></div>
+          <span class="skill-pct">95%</span>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
 
-<!-- ===== WINDOW: CONTACTS ===== -->
+
+<!-- ═══════════════════════════════════════
+     WINDOW: КОНТАКТЫ
+═══════════════════════════════════════ -->
 <div class="win-window raised-outer" id="win-contacts">
   <div class="win-titlebar" onmousedown="startDrag(event,'win-contacts')">
     <div class="win-title">
-      <svg width="14" height="14" viewBox="0 0 32 32"><rect x="2" y="6" width="28" height="20" fill="#c0c0c0"/><rect x="4" y="8" width="24" height="16" fill="#e8e8ff"/><polyline points="4,8 16,18 28,8" fill="none" stroke="#000080" stroke-width="2"/></svg>
+      <svg width="14" height="14" viewBox="0 0 32 32">
+        <rect x="2" y="6" width="28" height="20" fill="#c0c0c0"/>
+        <rect x="4" y="8" width="24" height="16" fill="#e8e8ff"/>
+        <polyline points="4,8 16,18 28,8" fill="none" stroke="#000080" stroke-width="2"/>
+      </svg>
       Контакты — Contact Me
     </div>
     <div class="win-controls">
@@ -806,31 +529,42 @@
   </div>
   <div class="win-content">
     <div class="win-body">
-      <div class="contact-row" onclick="window.open('https://github.com/your_username')">
-        <svg class="contact-icon pixel-icon" viewBox="0 0 20 20"><rect width="20" height="20" rx="3" fill="#24292e"/><path d="M10 2C5.6 2 2 5.6 2 10c0 3.5 2.3 6.5 5.5 7.5.4.1.5-.2.5-.4v-1.4c-2.2.5-2.7-1-2.7-1-.4-.9-.9-1.1-.9-1.1-.7-.5.1-.5.1-.5.8.1 1.2.8 1.2.8.7 1.2 1.9.9 2.3.7.1-.5.3-.9.5-1.1-1.8-.2-3.6-.9-3.6-3.9 0-.9.3-1.6.8-2.2-.1-.2-.4-1 .1-2.1 0 0 .7-.2 2.2.8 1.3-.4 2.7-.4 4 0 1.5-1 2.2-.8 2.2-.8.5 1.1.2 1.9.1 2.1.5.6.8 1.3.8 2.2 0 3-1.8 3.7-3.6 3.9.3.3.6.8.6 1.6v2.3c0 .2.1.5.5.4C15.7 16.5 18 13.5 18 10c0-4.4-3.6-8-8-8z" fill="#fff"/></svg>
+
+      <div class="contact-row" onclick="window.open('https://github.com/Anonymous1artem')">
+        <svg class="contact-icon pixel-icon" viewBox="0 0 20 20">
+          <rect width="20" height="20" rx="3" fill="#24292e"/>
+          <path d="M10 2C5.6 2 2 5.6 2 10c0 3.5 2.3 6.5 5.5 7.5.4.1.5-.2.5-.4v-1.4c-2.2.5-2.7-1-2.7-1-.4-.9-.9-1.1-.9-1.1-.7-.5.1-.5.1-.5.8.1 1.2.8 1.2.8.7 1.2 1.9.9 2.3.7.1-.5.3-.9.5-1.1-1.8-.2-3.6-.9-3.6-3.9 0-.9.3-1.6.8-2.2-.1-.2-.4-1 .1-2.1 0 0 .7-.2 2.2.8 1.3-.4 2.7-.4 4 0 1.5-1 2.2-.8 2.2-.8.5 1.1.2 1.9.1 2.1.5.6.8 1.3.8 2.2 0 3-1.8 3.7-3.6 3.9.3.3.6.8.6 1.6v2.3c0 .2.1.5.5.4C15.7 16.5 18 13.5 18 10c0-4.4-3.6-8-8-8z" fill="#fff"/>
+        </svg>
         <span class="contact-label">GitHub</span>
-        <span class="contact-value">github.com/your_username</span>
+        <span class="contact-value">github.com/Anonymous1artem</span>
       </div>
-      <div class="contact-row" onclick="window.open('https://t.me/your_telegram')">
-        <svg class="contact-icon pixel-icon" viewBox="0 0 20 20"><rect width="20" height="20" rx="3" fill="#2ca5e0"/><path d="M14.5 4.5L3 9l3 1 1 4 2-2 3 2.5 3-10z" fill="#fff"/></svg>
+
+      <div class="contact-row" onclick="window.open('https://t.me/HiGo69')">
+        <svg class="contact-icon pixel-icon" viewBox="0 0 20 20">
+          <rect width="20" height="20" rx="3" fill="#2ca5e0"/>
+          <path d="M14.5 4.5L3 9l3 1 1 4 2-2 3 2.5 3-10z" fill="#fff"/>
+        </svg>
         <span class="contact-label">Telegram</span>
-        <span class="contact-value">@your_telegram</span>
+        <span class="contact-value">@HiGo69</span>
       </div>
-      <div class="contact-row" onclick="window.open('mailto:your@email.com')">
-        <svg class="contact-icon pixel-icon" viewBox="0 0 20 20"><rect x="1" y="4" width="18" height="12" fill="#e8e8ff" stroke="#000080" stroke-width="1"/><polyline points="1,4 10,12 19,4" fill="none" stroke="#000080" stroke-width="1.5"/></svg>
+
+      <div class="contact-row" onclick="window.open('mailto:artem.brok007@gmail.com')">
+        <svg class="contact-icon pixel-icon" viewBox="0 0 20 20">
+          <rect x="1" y="4" width="18" height="12" fill="#e8e8ff" stroke="#000080" stroke-width="1"/>
+          <polyline points="1,4 10,12 19,4" fill="none" stroke="#000080" stroke-width="1.5"/>
+        </svg>
         <span class="contact-label">Email</span>
-        <span class="contact-value">your@email.com</span>
+        <span class="contact-value">artem.brok007@gmail.com</span>
       </div>
-      <div class="contact-row" onclick="window.open('https://linkedin.com/in/your_linkedin')">
-        <svg class="contact-icon pixel-icon" viewBox="0 0 20 20"><rect width="20" height="20" rx="3" fill="#0077b5"/><rect x="3" y="7" width="3" height="10" fill="#fff"/><circle cx="4.5" cy="4.5" r="1.5" fill="#fff"/><path d="M8 7h3v1.5c.5-.9 1.5-1.5 2.5-1.5C15 7 17 8 17 11v6h-3v-5c0-1-.5-2-1.5-2S11 11 11 12v5H8V7z" fill="#fff"/></svg>
-        <span class="contact-label">LinkedIn</span>
-        <span class="contact-value">your_linkedin</span>
-      </div>
+
     </div>
   </div>
 </div>
 
-<!-- TASKBAR -->
+
+<!-- ═══════════════════════════════════════
+     TASKBAR
+═══════════════════════════════════════ -->
 <div id="taskbar">
   <button id="start-btn" onclick="toggleStartMenu()">
     <svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
@@ -846,41 +580,78 @@
   <div id="taskbar-clock">00:00</div>
 </div>
 
-<!-- START MENU -->
+
+<!-- ═══════════════════════════════════════
+     START MENU
+═══════════════════════════════════════ -->
 <div id="start-menu">
   <div class="start-sidebar"><span>Windows 95</span></div>
   <div class="start-items">
+
     <div class="start-item" onclick="openWindow('win-about'); closeStartMenu()">
-      <svg width="16" height="16" viewBox="0 0 32 32"><circle cx="16" cy="10" r="6" fill="#ffd700"/><rect x="10" y="16" width="12" height="12" fill="#ffd700"/></svg>
+      <svg width="16" height="16" viewBox="0 0 32 32">
+        <circle cx="16" cy="10" r="6" fill="#ffd700"/>
+        <rect x="10" y="16" width="12" height="12" fill="#ffd700"/>
+      </svg>
       Обо мне
     </div>
+
     <div class="start-item" onclick="openWindow('win-projects'); closeStartMenu()">
-      <svg width="16" height="16" viewBox="0 0 32 32"><rect x="2" y="8" width="28" height="20" fill="#ffd700"/><rect x="2" y="6" width="12" height="4" fill="#ffd700"/></svg>
+      <svg width="16" height="16" viewBox="0 0 32 32">
+        <rect x="2" y="8" width="28" height="20" fill="#ffd700"/>
+        <rect x="2" y="6" width="12" height="4" fill="#ffd700"/>
+      </svg>
       Проекты
     </div>
+
     <div class="start-item" onclick="openWindow('win-skills'); closeStartMenu()">
-      <svg width="16" height="16" viewBox="0 0 32 32"><rect x="2" y="14" width="28" height="14" fill="#c0c0c0"/><rect x="4" y="16" width="6" height="10" fill="#0000aa"/></svg>
+      <svg width="16" height="16" viewBox="0 0 32 32">
+        <rect x="2" y="14" width="28" height="14" fill="#c0c0c0"/>
+        <rect x="4" y="16" width="6" height="10" fill="#0000aa"/>
+      </svg>
       Навыки
     </div>
+
     <div class="start-item" onclick="openWindow('win-contacts'); closeStartMenu()">
-      <svg width="16" height="16" viewBox="0 0 32 32"><rect x="2" y="6" width="28" height="20" fill="#c0c0c0"/></svg>
+      <svg width="16" height="16" viewBox="0 0 32 32">
+        <rect x="2" y="6" width="28" height="20" fill="#c0c0c0"/>
+      </svg>
       Контакты
     </div>
+
     <div class="start-divider"></div>
+
     <div class="start-item" onclick="goGithub(); closeStartMenu()">
-      <svg width="16" height="16" viewBox="0 0 32 32"><rect width="32" height="32" rx="4" fill="#24292e"/><path d="M16 5C9.9 5 5 9.9 5 16c0 4.9 3.2 9 7.5 10.5.5.1.7-.2.7-.5v-1.8c-3 .7-3.6-1.4-3.6-1.4-.5-1.2-1.2-1.5-1.2-1.5-1-.7.1-.7.1-.7 1.1.1 1.6 1.1 1.6 1.1 1 1.6 2.5 1.2 3.1.9.1-.7.4-1.2.7-1.4-2.4-.3-4.9-1.2-4.9-5.3 0-1.2.4-2.1 1.1-2.9-.1-.3-.5-1.4.1-2.9 0 0 .9-.3 3 1.1a10.4 10.4 0 015.4 0c2.1-1.4 3-1.1 3-1.1.6 1.5.2 2.6.1 2.9.7.8 1.1 1.7 1.1 2.9 0 4.1-2.5 5-4.9 5.3.4.3.7 1 .7 2v3c0 .3.2.6.7.5C23.8 25 27 20.9 27 16c0-6.1-4.9-11-11-11z" fill="#fff"/></svg>
+      <svg width="16" height="16" viewBox="0 0 32 32">
+        <rect width="32" height="32" rx="4" fill="#24292e"/>
+        <path d="M16 5C9.9 5 5 9.9 5 16c0 4.9 3.2 9 7.5 10.5.5.1.7-.2.7-.5v-1.8c-3 .7-3.6-1.4-3.6-1.4-.5-1.2-1.2-1.5-1.2-1.5-1-.7.1-.7.1-.7 1.1.1 1.6 1.1 1.6 1.1 1 1.6 2.5 1.2 3.1.9.1-.7.4-1.2.7-1.4-2.4-.3-4.9-1.2-4.9-5.3 0-1.2.4-2.1 1.1-2.9-.1-.3-.5-1.4.1-2.9 0 0 .9-.3 3 1.1a10.4 10.4 0 015.4 0c2.1-1.4 3-1.1 3-1.1.6 1.5.2 2.6.1 2.9.7.8 1.1 1.7 1.1 2.9 0 4.1-2.5 5-4.9 5.3.4.3.7 1 .7 2v3c0 .3.2.6.7.5C23.8 25 27 20.9 27 16c0-6.1-4.9-11-11-11z" fill="#fff"/>
+      </svg>
       GitHub Profile
     </div>
+
     <div class="start-divider"></div>
+
     <div class="start-item" onclick="closeStartMenu(); showBSOD()">
-      <svg width="16" height="16" viewBox="0 0 32 32"><rect width="32" height="32" fill="#c0c0c0"/><line x1="8" y1="8" x2="24" y2="24" stroke="#800000" stroke-width="3"/><line x1="24" y1="8" x2="8" y2="24" stroke="#800000" stroke-width="3"/></svg>
+      <svg width="16" height="16" viewBox="0 0 32 32">
+        <rect width="32" height="32" fill="#c0c0c0"/>
+        <line x1="8" y1="8" x2="24" y2="24" stroke="#800000" stroke-width="3"/>
+        <line x1="24" y1="8" x2="8" y2="24" stroke="#800000" stroke-width="3"/>
+      </svg>
       Выключить ПК
     </div>
+
   </div>
 </div>
 
-<!-- BSOD easter egg -->
-<div id="bsod" style="display:none; position:fixed; inset:0; background:#0000aa; color:#fff; font-family:'VT323',monospace; font-size:20px; padding:40px; z-index:99999; white-space:pre-line; cursor:pointer;" onclick="document.getElementById('bsod').style.display='none'">
+
+<!-- ═══════════════════════════════════════
+     BSOD (easter egg)
+═══════════════════════════════════════ -->
+<div id="bsod"
+     style="display:none; position:fixed; inset:0; background:#0000aa; color:#fff;
+            font-family:'VT323',monospace; font-size:20px; padding:40px;
+            z-index:99999; white-space:pre-line; cursor:pointer;"
+     onclick="document.getElementById('bsod').style.display='none'">
 A fatal exception 0E has occurred at 0028:C0034B14
 in VXD PORTFOLIO(01) + 00010E36.
 
@@ -895,203 +666,6 @@ Press any key to continue . . .
 [CLICK TO DISMISS]
 </div>
 
-<script>
-// ===== BOOT ANIMATION =====
-let bootPct = 0;
-const bootBar = document.getElementById('boot-bar-inner');
-const bootScreen = document.getElementById('boot-screen');
-const bootText = document.getElementById('boot-text');
-const msgs = ['Загрузка Windows 95...','Инициализация устройств...','Загрузка профиля...','Добро пожаловать!'];
-let msgIdx = 0;
-
-const bootInterval = setInterval(() => {
-  bootPct += Math.random() * 8 + 2;
-  if(bootPct > 100) bootPct = 100;
-  bootBar.style.width = bootPct + '%';
-  if(bootPct > 30 && msgIdx < 1) { bootText.textContent = msgs[1]; msgIdx = 1; }
-  if(bootPct > 60 && msgIdx < 2) { bootText.textContent = msgs[2]; msgIdx = 2; }
-  if(bootPct > 85 && msgIdx < 3) { bootText.textContent = msgs[3]; msgIdx = 3; }
-  if(bootPct >= 100) {
-    clearInterval(bootInterval);
-    setTimeout(() => {
-      bootScreen.style.transition = 'opacity 0.4s';
-      bootScreen.style.opacity = '0';
-      setTimeout(() => {
-        bootScreen.style.display = 'none';
-        openWindow('win-about');
-        setTimeout(() => openWindow('win-projects'), 300);
-        setTimeout(() => openWindow('win-contacts'), 600);
-      }, 400);
-    }, 600);
-  }
-}, 60);
-
-// ===== CLOCK =====
-function updateClock() {
-  const now = new Date();
-  const h = String(now.getHours()).padStart(2,'0');
-  const m = String(now.getMinutes()).padStart(2,'0');
-  document.getElementById('taskbar-clock').textContent = h + ':' + m;
-}
-updateClock();
-setInterval(updateClock, 10000);
-
-// ===== WINDOW MANAGEMENT =====
-const windows = {};
-const zBase = 100;
-let zTop = zBase;
-
-function openWindow(id) {
-  const el = document.getElementById(id);
-  if(!el) return;
-  el.classList.add('active');
-  el.style.zIndex = ++zTop;
-  if(!windows[id]) {
-    windows[id] = { minimized: false };
-    const offset = Object.keys(windows).length * 20;
-    if(!el.style.top || el.style.top === '0px') {
-      el.style.top = (60 + offset) + 'px';
-      el.style.left = (100 + offset) + 'px';
-    }
-  }
-  windows[id].minimized = false;
-  el.style.display = 'block';
-  updateTaskbar();
-}
-
-function closeWindow(id) {
-  const el = document.getElementById(id);
-  if(el) { el.classList.remove('active'); el.style.display = 'none'; }
-  delete windows[id];
-  updateTaskbar();
-}
-
-function minimizeWindow(id) {
-  const el = document.getElementById(id);
-  if(el) el.style.display = 'none';
-  if(windows[id]) windows[id].minimized = true;
-  updateTaskbar();
-}
-
-function maximizeWindow(id) {
-  const el = document.getElementById(id);
-  if(!el) return;
-  if(el.dataset.maximized === '1') {
-    el.style.top = el.dataset.prevTop;
-    el.style.left = el.dataset.prevLeft;
-    el.style.width = el.dataset.prevWidth;
-    el.style.height = '';
-    el.dataset.maximized = '0';
-  } else {
-    el.dataset.prevTop = el.style.top;
-    el.dataset.prevLeft = el.style.left;
-    el.dataset.prevWidth = el.style.width || '';
-    el.style.top = '0';
-    el.style.left = '0';
-    el.style.width = '100vw';
-    el.style.height = 'calc(100vh - 28px)';
-    el.dataset.maximized = '1';
-  }
-}
-
-function updateTaskbar() {
-  const bar = document.getElementById('taskbar-buttons');
-  bar.innerHTML = '';
-  const icons = {
-    'win-about': '👤',
-    'win-projects': '📁',
-    'win-skills': '📊',
-    'win-contacts': '✉️'
-  };
-  const labels = {
-    'win-about': 'Обо мне',
-    'win-projects': 'Проекты',
-    'win-skills': 'Навыки',
-    'win-contacts': 'Контакты'
-  };
-  for(const id in windows) {
-    const btn = document.createElement('div');
-    btn.className = 'taskbar-btn';
-    const el = document.getElementById(id);
-    if(el && el.style.display !== 'none') btn.classList.add('pressed');
-    btn.textContent = (icons[id]||'🗂') + ' ' + (labels[id]||id);
-    btn.onclick = () => {
-      const w = document.getElementById(id);
-      if(!w) return;
-      if(w.style.display === 'none') {
-        w.style.display = 'block';
-        w.style.zIndex = ++zTop;
-        if(windows[id]) windows[id].minimized = false;
-      } else if(w.style.zIndex < zTop) {
-        w.style.zIndex = ++zTop;
-      } else {
-        minimizeWindow(id);
-      }
-      updateTaskbar();
-    };
-    bar.appendChild(btn);
-  }
-}
-
-// ===== DRAG =====
-let dragging = null, dragOffX = 0, dragOffY = 0;
-function startDrag(e, id) {
-  dragging = id;
-  const el = document.getElementById(id);
-  const rect = el.getBoundingClientRect();
-  dragOffX = e.clientX - rect.left;
-  dragOffY = e.clientY - rect.top;
-  el.style.zIndex = ++zTop;
-  e.preventDefault();
-}
-document.addEventListener('mousemove', e => {
-  if(!dragging) return;
-  const el = document.getElementById(dragging);
-  if(!el) return;
-  let x = e.clientX - dragOffX;
-  let y = e.clientY - dragOffY;
-  x = Math.max(0, Math.min(x, window.innerWidth - el.offsetWidth));
-  y = Math.max(0, Math.min(y, window.innerHeight - el.offsetHeight - 28));
-  el.style.left = x + 'px';
-  el.style.top = y + 'px';
-});
-document.addEventListener('mouseup', () => dragging = null);
-
-// ===== ICON SELECT =====
-function selectIcon(el) {
-  document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
-  el.classList.add('selected');
-}
-document.addEventListener('click', e => {
-  if(!e.target.closest('.desktop-icon') && !e.target.closest('#start-menu') && !e.target.closest('#start-btn')) {
-    document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
-    closeStartMenu();
-  }
-});
-
-// ===== START MENU =====
-function toggleStartMenu() {
-  const m = document.getElementById('start-menu');
-  m.classList.toggle('open');
-}
-function closeStartMenu() {
-  document.getElementById('start-menu').classList.remove('open');
-}
-
-// ===== GITHUB =====
-function goGithub() {
-  window.open('https://github.com/your_username', '_blank');
-}
-
-// ===== RECYCLE BIN =====
-function openRecycleBin() {
-  alert('Корзина пуста.\n\nВсе баги были удалены.');
-}
-
-// ===== BSOD =====
-function showBSOD() {
-  document.getElementById('bsod').style.display = 'block';
-}
-</script>
+<script src="script.js"></script>
 </body>
 </html>
