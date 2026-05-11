@@ -1,0 +1,18 @@
+import javax.swing.*;
+import java.awt.*;
+
+public class GameWindow extends JFrame {
+    private GamePanel gamePanel;
+
+    public GameWindow() {
+        setTitle("Java RPG - Приключенческая игра");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setResizable(false);
+
+        gamePanel = new GamePanel();
+        add(gamePanel);
+
+        pack();
+        setLocationRelativeTo(null);
+    }
+}
